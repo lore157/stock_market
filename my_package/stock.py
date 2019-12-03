@@ -1,11 +1,12 @@
 import requests
 import json
-# we import the libraries that we need to build the function
+# Importing the libraries needed to build the function
 
 fmp_URL = 'https://financialmodelingprep.com/api/v3/company/profile/%s'
-#function definition
-def get_price(company="AAPL"):  #we try the function with Apple
-    r = requests.get(fmp_URL % company)#we take the value of teh stock from fmp
+
+# Function definition
+def get_price(company):  
+    r = requests.get(fmp_URL % company)  #We take the value of the stock from fmp
     data = json.loads(r.text)
     price = data['profile']['price']
     name = data['profile']['companyName']
