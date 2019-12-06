@@ -1,18 +1,14 @@
-from my_package import stock as sck #Importing module 'stock' from my_package
+from my_package import stock #Importing module 'stock' from my_package
 import sys
 import time
+import argparse
 
 '''
 main.py works by returning us the value of the company's stock price. Now we define the sentences that the program is going to return when called"
 '''
 
-#We import the function get_price from the module stock
-
-#This will check if there are sufficient arguments to make a comparison 
-#between companies
-
 valid_firms = ["AAPL", "GOOGL"]
-
+# this function requires two positional arguments to identify the companies and an optional argument that allow the user to get more explicit information about the program"
 def parsing_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("stock_code",
@@ -23,18 +19,32 @@ def parsing_input():
                         choices= valid_firms)
     parser.add_argument("-v", 
                         help= "Increases verbosity of the program.",
-                        action= "store_true")
+                        action= "store_true", default= False)
     args = parser.parse_args()
     return args
 
+#the following code gives the value of the stock price of the input companies
 try:
     args= parsing_input()
-    n, price= stock.get_price(args.stock_code)
-    print("Company {} has a stock value of {}$".format(price, n))
+    n, price= stock.get_price(args.stock_code) #import the function get_price from the module stock
+    if args.v:
+        print("Successfully fetched data")
+        print("Company {} has a stock value of {}$".format(price, n))
+    else:
+        print("{} = {}$".format(price, n))
+
     n, price= stock.get_price(args.stock_code2)
-    print("Company {} has a stock value of {}$".format(price, n))
+
+    if args.v:
+        print("Successfully fetched data")
+        print("Company {} has a stock value of {}$".format(price, n))
+    else:
+        print("{} = {}$".format(price, n))
+
+#this code helps the user to check if he wrote correctly the inputs
 
 except:
+#This will check if there are sufficient arguments to make a comparison between companies
     if len(sys.argv)>2:
         print("Write correctly the arguments!")
         exit()
