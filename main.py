@@ -5,12 +5,9 @@ import argparse
 import csv
 import json
 
-'''
-main.py works by returning us the value of the company's stock price. Now we define the sentences that the program is going to return when called"
-'''
+#main.py works by returning us the value of the company's stock price. Now we define the sentences that the program is going to return when called.
 
-
-#With this function we can read the csv file containing all the allowed valid companies names
+#With this function we can read the csv file containing all the allowed valid companies names.
 
 def readCompaniesCsv():
     reader = csv.reader(open('csv_stock.csv', 'r'))
@@ -41,7 +38,8 @@ def parsing_input():
 #The following code gives the value of the stock price of the input companies
 try:
     args= parsing_input()
-    n, price= stock.get_price(args.stock_code) #import the function get_price from the module stock
+    n, price= stock.get_price(args.stock_code)
+#import the function get_price from the module stock
     if args.v:
         print("Successfully fetched data")
         print("Company {} has a stock value of {}$".format(price, n))
@@ -65,9 +63,3 @@ except:
     else:
         print("Write all the required arguments!")
         exit()
-
-
-    
-
-	
-
