@@ -2,12 +2,28 @@ from my_package import stock #Importing module 'stock' from my_package
 import sys
 import time
 import argparse
+import csv
+import json
 
 '''
 main.py works by returning us the value of the company's stock price. Now we define the sentences that the program is going to return when called"
 '''
 
-valid_firms = ["AAPL", "GOOGL"]
+
+
+
+def readCompaniesCsv():
+    reader = csv.reader(open('csv_stock.csv', 'r'))
+    companies = []
+    next(reader)
+    for row in reader:
+        companies.append(row[2])
+    return companies
+
+
+
+valid_firms = readCompaniesCsv()
+
 # this function requires two positional arguments to identify the companies and an optional argument that allow the user to get more explicit information about the program"
 def parsing_input():
     parser = argparse.ArgumentParser()
@@ -42,7 +58,6 @@ try:
         print("{} = {}$".format(price, n))
 
 #this code helps the user to check if he wrote correctly the inputs
-
 except:
 #This will check if there are sufficient arguments to make a comparison between companies
     if len(sys.argv)>2:
@@ -51,4 +66,9 @@ except:
     else:
         print("Write all the required arguments!")
         exit()
+
+
+    
+
+	
 
