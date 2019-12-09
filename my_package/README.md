@@ -12,6 +12,9 @@ Including verbosity
 Company 261.14 has a stock value of Apple Inc.
 Company 1297.13 has a stock value of Alphabet Inc.
 ```
+Now the code works for the allowed companies names restricted to those in the csv file called csv_stock.csv. 
+
+
 
 Note that the project requires the ```json``` and ```requests``` module to run. [FMP](https://financialmodelingprep.com/) is an on-line resource that provides stock data. The APIs are documented in a [API documentation page](https://financialmodelingprep.com/developer/docs/). Note also that ```python2``` will give you a warning on a library, so you most likely want to run the program with: 
 

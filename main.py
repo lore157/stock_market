@@ -10,7 +10,7 @@ main.py works by returning us the value of the company's stock price. Now we def
 '''
 
 
-
+#With this function we can read the csv file containing all the allowed valid companies names
 
 def readCompaniesCsv():
     reader = csv.reader(open('csv_stock.csv', 'r'))
@@ -20,11 +20,10 @@ def readCompaniesCsv():
         companies.append(row[2])
     return companies
 
-
-
 valid_firms = readCompaniesCsv()
 
-# this function requires two positional arguments to identify the companies and an optional argument that allow the user to get more explicit information about the program"
+#This function requires two positional arguments to identify the companies and an optional argument that allow the user to get more explicit information about the program"
+
 def parsing_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("stock_code",
@@ -39,7 +38,7 @@ def parsing_input():
     args = parser.parse_args()
     return args
 
-#the following code gives the value of the stock price of the input companies
+#The following code gives the value of the stock price of the input companies
 try:
     args= parsing_input()
     n, price= stock.get_price(args.stock_code) #import the function get_price from the module stock
@@ -57,7 +56,7 @@ try:
     else:
         print("{} = {}$".format(price, n))
 
-#this code helps the user to check if he wrote correctly the inputs
+#This code helps the user to check if he wrote correctly the inputs
 except:
 #This will check if there are sufficient arguments to make a comparison between companies
     if len(sys.argv)>2:
