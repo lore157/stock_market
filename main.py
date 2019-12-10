@@ -1,4 +1,5 @@
 from my_package import stock  # Importing module 'stock' from my_package
+from scripts import dbmanager # Importing module 'dbmanager' from scripts
 import sys
 import time
 import argparse
@@ -30,11 +31,21 @@ status of the program and a more complete output.
 def parsing_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("stock_code",
-                        help "The ticker symbol of the company.",
+                        help="The ticker symbol of the company.",
                         choices=valid_firms)
     parser.add_argument("stock_code2",
                         help="The ticker symbol of the company.",
                         choices=valid_firms)
+    parser.add_argument('-a',
+                        help="add a username (requires -p)",
+                        required=False)
+    parser.add_argument('-p',
+                        help="the username password",
+                        required=True)
+    parser.add_argument('-c',
+                        help="check for a username and password"
+                        "(requires -p)", required=False)
+
     parser.add_argument("-v",
                         help="Increases verbosity of the program.",
                         action="store_true", default=False)
@@ -45,6 +56,20 @@ def parsing_input():
 try:
     valid_firms = readCompaniesCsv()
     args = parsing_input()
+    print("OK 1!")
+    dbmanager.open_and_create()
+    print("oki")
+    if args.a and args.p:    
+        dbmanager.save_new_username(args.a, args.p)
+        print("OK 2!")
+    elif args.c and args.p:
+        dbmanager.check_for_username(args.c, args.p)
+        print("OK 2!")
+    else:
+         print ("insert -a and -p or -c and -p")
+         exit()
+    print("OK 3!")
+
     n, price = stock.get_price(args.stock_code)  # Calling get_price from stock
     if args.v:
         print("Successfully fetched data")
