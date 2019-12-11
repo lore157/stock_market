@@ -61,6 +61,7 @@ try:
         dbmanager.save_new_username(args.a, args.p)
         print("OK 2A!")
     elif args.c and args.p:
+        print("OK temp!")
         dbmanager.check_for_username(args.c, args.p)
         print("OK 2B!")
     else:

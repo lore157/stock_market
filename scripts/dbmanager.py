@@ -20,19 +20,19 @@ def open_and_create():
             print("| ", row[0], " | ", row[1], " |")
             print("---------------------------------------")
         print("OK 1.3!")
-        # Printing all elements of 'login' table, for control
+        '''# Printing all elements of 'login' table, for control
         cursor.execute("SELECT * FROM login")
         try_two = cursor.fetchall()
         for row in try_two:
             print("| ", row[0], " | ", row[1], " |")
             print("---------------------------------------")
-        print("OK 1.4!")
+        print("OK 1.4!")'''
     except sqlite3.OperationalError:
         # Create tables
         cursor.execute('''CREATE TABLE register
                        (username TEXT, salt TEXT,
                        PRIMARY KEY (username))''')
-        print("OK 1.3!")
+        print("OK 1.5!")
         cursor.execute('''CREATE TABLE login
                        (username TEXT, digest TEXT,
                        PRIMARY KEY (username),
@@ -43,13 +43,10 @@ def save_new_username(username, password):
     global conn
     global cursor
     salt, digest = hash_password(password)
-    print("PROVA 0")
     cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?)''',
                    (username, salt))
-    print("PROVA 1")
     cursor.execute('''INSERT OR REPLACE INTO login VALUES (?,?)''',
                    (username, digest))
-    print("PROVA 2")
     conn.commit()
     return
 
@@ -60,19 +57,31 @@ def hash_password(pw):
         digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
     return salt, digest
 
-def check_for_username_correct(username, password):
+def check_for_username(username, password):
     global conn
     global cursor
-    digest = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    rows = cursor.execute("SELECT * FROM user WHERE username=? and password=?",
-                          (username, digest))
+    temp = cursor.execute('''SELECT salt FROM register
+                          WHERE username=?''', (username))
+    print('PROVA 3')
+    if temp:
+        login_digest = temp + password
+        for i in range(1000000):
+            login_digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
+    # DB with all registered users
+    print('PROVA 4')
+    rows = cursor.execute('''SELECT * from register JOIN login
+      WHERE register.username = login.username''')
+    print("ROWS: ", rows)
+    result = cursor.execute('''SELECT * FROM rows
+                   WHERE username=? AND digest=?''', (username, login_digest))
     conn.commit()
-    results = rows.fetchall()
+    person = cursor.fetchall()
+    print("PERSON: ", person)
     # NOTE: this could be done more efficiently with a JOIN
-    if results:
-        b = cursor.execute("SELECT balance FROM wallet WHERE username=?",
-                           (results[0][0],))
-        print("User is present, password is valid, balance is %s"
-              % b.fetchall()[0][0])
+    if person:
+        pass
     else:
         print("User is not present, or password is invalid")
+
+
+   
