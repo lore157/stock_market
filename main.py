@@ -50,7 +50,7 @@ def parsing_input():
     args = parser.parse_args()
     return args
 
-# The following code gives the value of the stock price of chosen companies
+# The following code gives the value of the stock price of chosen companies.
 try:
     valid_firms = readCompaniesCsv()
     args = parsing_input()
@@ -61,7 +61,6 @@ try:
         dbmanager.save_new_username(args.a, args.p)
         print("OK 2A!")
     elif args.c and args.p:
-        print("OK temp!")
         dbmanager.check_for_username(args.c, args.p)
         print("OK 2B!")
     else:
@@ -84,7 +83,7 @@ try:
     else:
         print("{} = {}$".format(price, n))
 
-# Troubleshooting for mosto common user errors
+# Troubleshooting for most common user errors
 except:
     # Check if there are sufficient arguments to allow for a company comparison
     if len(sys.argv) > 2:

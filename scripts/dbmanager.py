@@ -14,39 +14,29 @@ def open_and_create():
     try:
         cursor.execute("SELECT * FROM register")
         print("OK 1.2!")
-        # Printing all elements of 'register' table, for control
+        # Print all elements of 'register' table, for control
         try_one = cursor.fetchall()
         for row in try_one:
-            print("| ", row[0], " | ", row[1], " |")
             print("---------------------------------------")
-        print("OK 1.3!")
-        '''# Printing all elements of 'login' table, for control
-        cursor.execute("SELECT * FROM login")
-        try_two = cursor.fetchall()
-        for row in try_two:
-            print("| ", row[0], " | ", row[1], " |")
-            print("---------------------------------------")
-        print("OK 1.4!")'''
+            print("| ", row[0], " | ", row[1], " | ", row[2], " |")
     except sqlite3.OperationalError:
-        # Create tables
+        # Create table
         cursor.execute('''CREATE TABLE register
-                       (username TEXT, salt TEXT,
+                       (username TEXT, salt TEXT, digest TEXT,
                        PRIMARY KEY (username))''')
-        print("OK 1.5!")
-        cursor.execute('''CREATE TABLE login
-                       (username TEXT, digest TEXT,
-                       PRIMARY KEY (username),
-                       FOREIGN KEY (username) REFERENCES register(username))''')
+        print("Fixed blank database.\nNow you're able to register for full \
+               access to our service.\nIf you want to do so, please use -a \
+               USERNAME -p PASSWORD when running this program again.")
+        print("Quitting the program now.")
+        exit()
     return
 
 def save_new_username(username, password):
     global conn
     global cursor
     salt, digest = hash_password(password)
-    cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?)''',
-                   (username, salt))
-    cursor.execute('''INSERT OR REPLACE INTO login VALUES (?,?)''',
-                   (username, digest))
+    cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?,?)''',
+                   (username, salt, digest))
     conn.commit()
     return
 
@@ -60,28 +50,34 @@ def hash_password(pw):
 def check_for_username(username, password):
     global conn
     global cursor
-    temp = cursor.execute('''SELECT salt FROM register
-                          WHERE username=?''', (username))
-    print('PROVA 3')
+    temp = cursor.execute('''SELECT * FROM register
+                          WHERE username=?''', (username,))
     if temp:
-        login_digest = temp + password
+        temp2 = temp.fetchall()
+        count = 0
+        for row in temp2:
+            if (count == 0):
+                login_digest = row[1] + password
+                count += 1
         for i in range(1000000):
-            login_digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
-    # DB with all registered users
+            login_digest = hashlib.sha256(login_digest.encode('utf-8')).hexdigest()
+    # Select DB row with relevant username
     print('PROVA 4')
-    rows = cursor.execute('''SELECT * from register JOIN login
-      WHERE register.username = login.username''')
-    print("ROWS: ", rows)
-    result = cursor.execute('''SELECT * FROM rows
-                   WHERE username=? AND digest=?''', (username, login_digest))
+    rows = cursor.execute('''SELECT * from register
+                          WHERE username=? AND digest=?''',
+                          (username, login_digest))
     conn.commit()
-    person = cursor.fetchall()
-    print("PERSON: ", person)
-    # NOTE: this could be done more efficiently with a JOIN
-    if person:
-        pass
+    # Change program behaviour based on verified registration
+    if rows:
+        print("Username and password are correct.")
+        registered = True
     else:
         print("User is not present, or password is invalid")
+        if verbose:
+            print("If you want additional features, please register first \
+                  or confirm username and password are written correctly.")
+        registered = False
+    return registered
 
 
    
