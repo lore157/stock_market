@@ -12,21 +12,15 @@ def open_and_create():
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT * FROM register")
-        '''# Print all elements of 'register' table, for control
-        try_one = cursor.fetchall()
-        for row in try_one:
-            print("---------------------------------------")
-            print("| ", row[0], " | ", row[1], " | ", row[2], " |")'''
     except sqlite3.OperationalError:
         # Create table
         cursor.execute('''CREATE TABLE register
                        (username TEXT, salt TEXT, digest TEXT,
                        PRIMARY KEY (username))''')
         print("Fixed blank database.\nNow you're able to register for full \
-               access to our service.\nIf you want to do so, please use -a \
-               USERNAME -p PASSWORD when running this program again.")
-        print("Quitting the program now.")
-        exit()
+access to our service.\nIf you want to do so, please use -a \
+USERNAME -p PASSWORD when running this program again.")
+        sys.exit()
     return
 
 def save_new_username(username, password, verbosity):
@@ -54,21 +48,18 @@ def check_for_username(username, password, verbosity):
     try:
         temp = cursor.execute('''SELECT * FROM register
                               WHERE username=?''', (username,))
+        temp = temp.fetchall()
     except:
-        temp = None
+        temp = []
 
     if temp:
-        temp2 = temp.fetchall()
-        count = 0
-        for row in temp2:
-            if (count == 0):
-                login_digest = row[1] + password
-                count += 1
+        login_digest = temp[0][1] + password
         if verbosity:
             print("\nRetrieving password...")
         for i in range(1000000):
             login_digest = hashlib.sha256(login_digest.encode('utf-8')).hexdigest()
     # Select DB row with relevant username
+    print("PROVA 1.")
     try:
         rows = cursor.execute('''SELECT * from register
                               WHERE username=? AND digest=?''',
@@ -76,12 +67,12 @@ def check_for_username(username, password, verbosity):
         conn.commit()
         if verbosity:
             print("Done!")
+        rows = rows.fetchall()
     except:
-        rows = None
+        rows = []
 
     # Change program behaviour based on verified registration
-    rows = rows.fetchall()
-    
+    print("PROVA 2.")
     if rows:
         registered = True
         print("\nUsername and password are correct.")
@@ -94,5 +85,3 @@ or confirm username and password are written correctly.")
 
     return registered
 
-
-   

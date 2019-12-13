@@ -72,7 +72,7 @@ def parsing_input():
     args = parser.parse_args()
     return args
 
-# Main function, returning the value of the stock price of chosen companies.
+# Main function, return the value of the stock price of chosen companies.
 if __name__ == "__main__":
     try:
         # Retrieve allowed ticker symbols and user input
@@ -85,8 +85,7 @@ if __name__ == "__main__":
 
         if args.a and args.p:
             dbmanager.save_new_username(args.a, args.p, args.v)
-            print("Only this time, the program will run in guest mode.")
-            print("To enjoy the full service, please login next time.")
+            reg_status = True
         elif args.c and args.p:
             reg_status = dbmanager.check_for_username(args.c, args.p, args.v)
 
@@ -108,13 +107,16 @@ if __name__ == "__main__":
         print("--------------------------------------------------------------")
 
     # Troubleshooting for most common user errors
-    except:
-        # Check for sufficient arguments to allow for a company comparison
-        try:
-            if args.stock_code and args.stock_code2:
-                print("\nWrite correctly the ticker symbols!")
-                exit()
-        except NameError:
-            print("\nWrite both ticker symbols!")
-            exit()
+    except SystemExit:
+        print("\nQuitting the program now.")
+        sys.exit()
+    except NameError:
+        print("\nWrite both ticker symbols!")
+        sys.exit()
+    else:
+        # Check for sufficient arguments to allow for a company comparison    
+        if args.stock_code and args.stock_code2:
+            print("\nWrite correctly the ticker symbols!")
+            sys.exit()
+
 
