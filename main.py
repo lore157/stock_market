@@ -8,10 +8,10 @@ import json
 
 '''
 "main.py" main objective is to return the value of a company's stock price from
-an online database with real-time data
+an online database with real-time data.
 '''
 
-# To read the .csv file containing all the allowed companies names.
+# To read the .csv file containing all the allowed company names.
 def readCompaniesCsv():
     reader = csv.reader(open('csv_stock.csv', 'r'))
     companies = []
@@ -19,6 +19,28 @@ def readCompaniesCsv():
     for row in reader:
         companies.append(row[2])
     return companies
+
+# To display data according to verbosity and user status
+def output_check(verbosity, reg_status):
+    if verbosity == True and reg_status == True:
+        print("--------------------------------------------------------------")
+        print("Successfully fetched data.")
+        print("Company {} right now has a stock value of {}$".format(n, price))
+        print("Company {} right now has a beta equal to {}".format(n, beta))
+    elif verbosity == False and reg_status == True:
+        print("--------------------------------------------------------------")
+        print("Company: {}".format(n))
+        print("Stock price: {}$".format(price))
+        print("Beta: {}".format(beta))
+    elif verbosity == True and reg_status == False:
+        print("--------------------------------------------------------------")
+        print("Successfully fetched data.")
+        print("Company {} right now has a stock value of {}$".format(n, price))
+    elif verbosity == False and reg_status == False:
+        print("--------------------------------------------------------------")
+        print("Company: {}".format(n))
+        print("Stock price: {}$".format(price))
+    return
 
 '''
 The next function requires two positional arguments to identify the companies
@@ -36,60 +58,60 @@ def parsing_input():
                         help="The ticker symbol of the company.",
                         choices=valid_firms)
     parser.add_argument('-a',
-                        help="Add a username (requires -p)",
+                        help="To add a username (requires -p)",
                         type=str, required=False)
     parser.add_argument('-p',
                         help="The password of the related username.",
-                        type=str, required=True)
+                        type=str, required=False)
     parser.add_argument('-c',
-                        help="Check for a username and password (requires -p)",
-                        type=str,  required=False)
+                        help="To check for a username and password \
+                             (requires -p)", type=str, required=False)
     parser.add_argument("-v",
                         help="Increases verbosity of the program.",
                         action="store_true", default=False)
     args = parser.parse_args()
     return args
 
-# The following code gives the value of the stock price of chosen companies.
-try:
-    valid_firms = readCompaniesCsv()
-    args = parsing_input()
-    
-    dbmanager.open_and_create()
-    print("OK 2!")
-    if args.a and args.p: 
-        dbmanager.save_new_username(args.a, args.p)
-        print("OK 2A!")
-    elif args.c and args.p:
-        dbmanager.check_for_username(args.c, args.p)
-        print("OK 2B!")
-    else:
-         print ("Insert -a and -p or -c and -p.")
-         exit()
-    print("OK 3!")
+# Main function, returning the value of the stock price of chosen companies.
+if __name__ == "__main__":
+    try:
+        # Retrieve allowed ticker symbols and user input
+        valid_firms = readCompaniesCsv()
+        args = parsing_input()
 
-    n, price = stock.get_price(args.stock_code)  # Calling get_price from stock
-    if args.v:
-        print("Successfully fetched data")
-        print("Company {} has a stock value of {}$".format(price, n))
-    else:
-        print("{} = {}$".format(price, n))
+        # Access to DB and register or login user
+        dbmanager.open_and_create()
+        if args.a and args.p: 
+            dbmanager.save_new_username(args.a, args.p)
+            reg = False
+        elif args.c and args.p:
+            reg = dbmanager.check_for_username(args.c, args.p)
+        else:
+            print("Guest user mode, demo started.")
+            print("The program will retrieve only real-time stock prices.")
+            reg = False
 
-    n, price = stock.get_price(args.stock_code2)
+        # Change in the behaviour of the program according to user status
+        if reg == True:
+            price, beta, n = stock.get_data_registered(args.stock_code)
+            output_check(args.v, reg)
+            price, beta, n = stock.get_data_registered(args.stock_code2)
+            output_check(args.v, reg)
+        else:
+            price, n = stock.get_price_demo(args.stock_code)
+            output_check(args.v, reg)
+            price, n = stock.get_price_demo(args.stock_code2)
+            output_check(args.v, reg)
+        print("--------------------------------------------------------------")
 
-    if args.v:
-        print("Successfully fetched data")
-        print("Company {} has a stock value of {}$".format(price, n))
-    else:
-        print("{} = {}$".format(price, n))
-
-# Troubleshooting for most common user errors
-except:
-    # Check if there are sufficient arguments to allow for a company comparison
-    if len(sys.argv) > 2:
-        print("Write correctly the arguments!")
-        exit()
-    else:
-        print("Write all the required arguments!")
-        exit()
+    # Troubleshooting for most common user errors
+    except:
+        # Check for sufficient arguments to allow for a company comparison
+        try:
+            if args.stock_code and args.stock_code2:
+                print("Write correctly the ticker symbols!")
+                exit()
+        except NameError:
+            print("Write both ticker symbols!")
+            exit()
 

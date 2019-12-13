@@ -10,15 +10,13 @@ def open_and_create():
     global cursor
     conn = sqlite3.connect('credentials.db')
     cursor = conn.cursor()
-    print("OK 1.1!")
     try:
         cursor.execute("SELECT * FROM register")
-        print("OK 1.2!")
-        # Print all elements of 'register' table, for control
+        '''# Print all elements of 'register' table, for control
         try_one = cursor.fetchall()
         for row in try_one:
             print("---------------------------------------")
-            print("| ", row[0], " | ", row[1], " | ", row[2], " |")
+            print("| ", row[0], " | ", row[1], " | ", row[2], " |")'''
     except sqlite3.OperationalError:
         # Create table
         cursor.execute('''CREATE TABLE register
@@ -38,6 +36,7 @@ def save_new_username(username, password):
     cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?,?)''',
                    (username, salt, digest))
     conn.commit()
+    print("User successfully registered!")
     return
 
 def hash_password(pw):
@@ -50,6 +49,7 @@ def hash_password(pw):
 def check_for_username(username, password):
     global conn
     global cursor
+
     temp = cursor.execute('''SELECT * FROM register
                           WHERE username=?''', (username,))
     if temp:
@@ -62,7 +62,6 @@ def check_for_username(username, password):
         for i in range(1000000):
             login_digest = hashlib.sha256(login_digest.encode('utf-8')).hexdigest()
     # Select DB row with relevant username
-    print('PROVA 4')
     rows = cursor.execute('''SELECT * from register
                           WHERE username=? AND digest=?''',
                           (username, login_digest))
