@@ -80,28 +80,31 @@ if __name__ == "__main__":
         args = parsing_input()
 
         # Access to DB and register or login user
+        reg_status = False
         dbmanager.open_and_create()
-        if args.a and args.p: 
-            dbmanager.save_new_username(args.a, args.p)
-            reg = False
+
+        if args.a and args.p:
+            dbmanager.save_new_username(args.a, args.p, args.v)
+            print("Only this time, the program will run in guest mode.")
+            print("To enjoy the full service, please login next time.")
         elif args.c and args.p:
-            reg = dbmanager.check_for_username(args.c, args.p)
-        else:
-            print("Guest user mode, demo started.")
+            reg_status = dbmanager.check_for_username(args.c, args.p, args.v)
+
+        if reg_status == False:
+            print("\nGuest user mode, demo started.")
             print("The program will retrieve only real-time stock prices.")
-            reg = False
 
         # Change in the behaviour of the program according to user status
-        if reg == True:
+        if reg_status == True:
             price, beta, n = stock.get_data_registered(args.stock_code)
-            output_check(args.v, reg)
+            output_check(args.v, reg_status)
             price, beta, n = stock.get_data_registered(args.stock_code2)
-            output_check(args.v, reg)
+            output_check(args.v, reg_status)
         else:
             price, n = stock.get_price_demo(args.stock_code)
-            output_check(args.v, reg)
+            output_check(args.v, reg_status)
             price, n = stock.get_price_demo(args.stock_code2)
-            output_check(args.v, reg)
+            output_check(args.v, reg_status)
         print("--------------------------------------------------------------")
 
     # Troubleshooting for most common user errors
@@ -109,9 +112,9 @@ if __name__ == "__main__":
         # Check for sufficient arguments to allow for a company comparison
         try:
             if args.stock_code and args.stock_code2:
-                print("Write correctly the ticker symbols!")
+                print("\nWrite correctly the ticker symbols!")
                 exit()
         except NameError:
-            print("Write both ticker symbols!")
+            print("\nWrite both ticker symbols!")
             exit()
 

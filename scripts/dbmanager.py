@@ -29,14 +29,16 @@ def open_and_create():
         exit()
     return
 
-def save_new_username(username, password):
+def save_new_username(username, password, verbosity):
     global conn
     global cursor
+    if verbosity:
+        print("Registering user...")
     salt, digest = hash_password(password)
     cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?,?)''',
                    (username, salt, digest))
     conn.commit()
-    print("User successfully registered!")
+    print("\nUser successfully registered!")
     return
 
 def hash_password(pw):
@@ -46,12 +48,15 @@ def hash_password(pw):
         digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
     return salt, digest
 
-def check_for_username(username, password):
+def check_for_username(username, password, verbosity):
     global conn
     global cursor
+    try:
+        temp = cursor.execute('''SELECT * FROM register
+                              WHERE username=?''', (username,))
+    except:
+        temp = None
 
-    temp = cursor.execute('''SELECT * FROM register
-                          WHERE username=?''', (username,))
     if temp:
         temp2 = temp.fetchall()
         count = 0
@@ -59,23 +64,34 @@ def check_for_username(username, password):
             if (count == 0):
                 login_digest = row[1] + password
                 count += 1
+        if verbosity:
+            print("\nRetrieving password...")
         for i in range(1000000):
             login_digest = hashlib.sha256(login_digest.encode('utf-8')).hexdigest()
     # Select DB row with relevant username
-    rows = cursor.execute('''SELECT * from register
-                          WHERE username=? AND digest=?''',
-                          (username, login_digest))
-    conn.commit()
+    try:
+        rows = cursor.execute('''SELECT * from register
+                              WHERE username=? AND digest=?''',
+                              (username, login_digest))
+        conn.commit()
+        if verbosity:
+            print("Done!")
+    except:
+        rows = None
+
     # Change program behaviour based on verified registration
+    rows = rows.fetchall()
+    
     if rows:
-        print("Username and password are correct.")
         registered = True
+        print("\nUsername and password are correct.")
     else:
-        print("User is not present, or password is invalid")
-        if verbose:
-            print("If you want additional features, please register first \
-                  or confirm username and password are written correctly.")
         registered = False
+        print("\nUser is not present, or password is invalid.")
+        if verbosity:
+            print("If you want additional features, please register first \
+or confirm username and password are written correctly.")
+
     return registered
 
 
