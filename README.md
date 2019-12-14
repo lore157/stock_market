@@ -1,4 +1,4 @@
-##Implementation of a PRICE STOCK CHECKER!
+# **Implementation of a PRICE STOCK CHECKER!**
 
 In this repository, you can find a file called main.py that can help you to obtain in real time the stock value of companies in US dollars by querying an online FMP service. 
 
@@ -63,15 +63,17 @@ Company Alphabet Inc. right now has a beta equal to 1.058184
 ```
 
 The user can choose the ticker symbol of a company from those provided and allowed to check. Please remember to write two companies tickers so you can compare them better! Moreover, if the user is already registered can check also the beta value for the selected companies.
-FMP is an on-line resource that provides stock data. The APIs are documented in a API documentation page.
+FMP is an on-line resource that provides stock data.
 
-#Documentation:
+## **Documentation**
 
-#File with data :
+## **File with data**
+
 Tickers symbols (such as AAPL, GOOGL) are stored in a .csv file called csv_stock in my_package/csv_stock. It’s necessary to write two tickers as input to compare them.
 The code in file code_for_csv.py  is used only to create the csv and it is not called by our program. It takes the APIs from the website URL and stores them with json. Then, it converts the database in .csv with to_csv using the "pandas" library. So, in the .csv we are going to find the allowed companies' name that the user has to write as input to make the program work.
 
-#Command line parameters:
+## **Command line parameters**
+
 As positional arguments we have chosen the tickers symbol of the companies that can be found in my_package/csv_stock.  stock_code and stock_code2 are the positional arguments in parsing input function.
 As optional arguments we used:
 -a: it will add a new user
@@ -89,14 +91,16 @@ How to log in into the database
 $ python3 main.py AAPL GOOGL -c USERNAME -p PASSWORD
 ```
 
-#Testing
+## **Testing**
+
 The tests of the code are shown in the file: my_package/test
 Here, you can find one python module called “test.py” that test of the function readCompaniesCsv from main.py and the function check_for_username from dbmanager.py
 To run the tests: python3 -m unittest -v -b test/test_stock.py 
 TESTS DO NOT WORK! 
 
 
-#Team software programmers:
+## **Team software programmers**
+
 Lorenzo Masarin - programmer name Lore157
 Matteo Pettenà - programmer name M-PETT
 Stefano Torresan – programmer name IvoryTower48
