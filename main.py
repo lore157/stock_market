@@ -6,15 +6,12 @@ import argparse
 import csv
 import json
 
-'''
-"main.py" main objective is to return the value of a company's stock price from
-an online database with real-time data.
-'''
-
-# To read the .csv file containing all the allowed company names.
-
 
 def readCompaniesCsv():
+    """ Function used to take the company's stock value from the .csv
+
+        :return: a list with the stock's value"""
+
     reader = csv.reader(open('csv_stock.csv', 'r'))
     companies = []
     next(reader)
@@ -22,24 +19,36 @@ def readCompaniesCsv():
         companies.append(row[2])
     return companies
 
-# To display data according to verbosity and user status
-
 
 def output_check(verbosity, reg_status):
+    """Tailoring the output according to registration status
+
+    This function defines the type of output according to user's registration;
+    If the user is logging-in it will get the beta value for the company
+    required , otherwise it will get just the stock's value. The output changes
+    even if the user has required -v in the command line.
+
+    :param verbosity: the level of verbosity required by the user
+    :param reg_status: wheter the user is registered or not"""
+
+    # The user is registered and asks for verbosity.
     if verbosity and reg_status:
         print("--------------------------------------------------------------")
         print("Successfully fetched data.")
         print("Company {} right now has a stock value of {}$".format(n, price))
         print("Company {} right now has a beta equal to {}".format(n, beta))
+    # The user is registered but doesn't ask for verbosity.
     elif verbosity == False and reg_status == True:
         print("--------------------------------------------------------------")
         print("Company: {}".format(n))
         print("Stock price: {}$".format(price))
         print("Beta: {}".format(beta))
+    # The user is not registered but asks for verbosity.
     elif verbosity and reg_status == False:
         print("--------------------------------------------------------------")
         print("Successfully fetched data.")
         print("Company {} right now has a stock value of {}$".format(n, price))
+    # The user is  not registered and doesn't ask for verbosity.
     elif verbosity == False and reg_status == False:
         print("--------------------------------------------------------------")
         print("Company: {}".format(n))
@@ -47,21 +56,23 @@ def output_check(verbosity, reg_status):
     return
 
 
-'''
-The next function requires two positional arguments to identify the companies
-and an optional argument that allows the user to get more information about the
-status of the program and a more complete output.
-'''
-
-
 def parsing_input():
+    """Parsing the input for our program
+
+    This function requires two positional arguments to identify the companies
+    that the user is interested in and four optional arguments that are used to
+    register the user (-a), to insert the password (-p), to perform a log-in
+    (-c) and to get more info about the status of the program. """
+
     parser = argparse.ArgumentParser()
+    # Positional arguments
     parser.add_argument("stock_code",
                         help="The ticker symbol of the company.",
                         choices=valid_firms)
     parser.add_argument("stock_code2",
                         help="The ticker symbol of the company.",
                         choices=valid_firms)
+    # Optional arguments
     parser.add_argument('-a',
                         help="To add a username (requires -p)",
                         type=str, required=False)
@@ -78,8 +89,10 @@ def parsing_input():
     return args
 
 
-# Main function, return the value of the stock price of chosen companies.
 if __name__ == "__main__":
+    """"main.py" main objective is to return the value of a company's stock
+    price from an online database with real-time data."""
+
     try:
         # Retrieve allowed ticker symbols and user input
         valid_firms = readCompaniesCsv()
@@ -89,9 +102,11 @@ if __name__ == "__main__":
         reg_status = False
         dbmanager.open_and_create()
 
+        # Process of user registration
         if args.a and args.p:
             dbmanager.save_new_username(args.a, args.p, args.v)
             reg_status = True
+        # The user is already registered
         elif args.c and args.p:
             reg_status = dbmanager.check_for_username(args.c, args.p, args.v)
 
@@ -124,3 +139,4 @@ if __name__ == "__main__":
         if args.stock_code and args.stock_code2:
             print("\nWrite correctly the ticker symbols!")
             sys.exit()
+
