@@ -12,6 +12,8 @@ an online database with real-time data.
 '''
 
 # To read the .csv file containing all the allowed company names.
+
+
 def readCompaniesCsv():
     reader = csv.reader(open('csv_stock.csv', 'r'))
     companies = []
@@ -21,8 +23,10 @@ def readCompaniesCsv():
     return companies
 
 # To display data according to verbosity and user status
+
+
 def output_check(verbosity, reg_status):
-    if verbosity == True and reg_status == True:
+    if verbosity and reg_status:
         print("--------------------------------------------------------------")
         print("Successfully fetched data.")
         print("Company {} right now has a stock value of {}$".format(n, price))
@@ -32,7 +36,7 @@ def output_check(verbosity, reg_status):
         print("Company: {}".format(n))
         print("Stock price: {}$".format(price))
         print("Beta: {}".format(beta))
-    elif verbosity == True and reg_status == False:
+    elif verbosity and reg_status == False:
         print("--------------------------------------------------------------")
         print("Successfully fetched data.")
         print("Company {} right now has a stock value of {}$".format(n, price))
@@ -41,6 +45,7 @@ def output_check(verbosity, reg_status):
         print("Company: {}".format(n))
         print("Stock price: {}$".format(price))
     return
+
 
 '''
 The next function requires two positional arguments to identify the companies
@@ -72,6 +77,7 @@ def parsing_input():
     args = parser.parse_args()
     return args
 
+
 # Main function, return the value of the stock price of chosen companies.
 if __name__ == "__main__":
     try:
@@ -89,12 +95,12 @@ if __name__ == "__main__":
         elif args.c and args.p:
             reg_status = dbmanager.check_for_username(args.c, args.p, args.v)
 
-        if reg_status == False:
+        if not reg_status:
             print("\nGuest user mode, demo started.")
             print("The program will retrieve only real-time stock prices.")
 
         # Change in the behaviour of the program according to user status
-        if reg_status == True:
+        if reg_status:
             price, beta, n = stock.get_data_registered(args.stock_code)
             output_check(args.v, reg_status)
             price, beta, n = stock.get_data_registered(args.stock_code2)
@@ -114,9 +120,7 @@ if __name__ == "__main__":
         print("\nWrite both ticker symbols!")
         sys.exit()
     else:
-        # Check for sufficient arguments to allow for a company comparison    
+        # Check for sufficient arguments to allow for a company comparison
         if args.stock_code and args.stock_code2:
             print("\nWrite correctly the ticker symbols!")
             sys.exit()
-
-

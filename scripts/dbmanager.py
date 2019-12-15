@@ -2,8 +2,10 @@ import sqlite3
 import hashlib
 import random
 
+
 conn = None
 cursor = None
+
 
 def open_and_create():
     global conn
@@ -23,6 +25,7 @@ USERNAME -p PASSWORD when running this program again.")
         sys.exit()
     return
 
+
 def save_new_username(username, password, verbosity):
     global conn
     global cursor
@@ -32,8 +35,10 @@ def save_new_username(username, password, verbosity):
     cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?,?)''',
                    (username, salt, digest))
     conn.commit()
+
     print("\nUser successfully registered!")
     return
+
 
 def hash_password(pw):
     salt = str(random.random())
@@ -41,6 +46,7 @@ def hash_password(pw):
     for i in range(1000000):
         digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
     return salt, digest
+
 
 def check_for_username(username, password, verbosity):
     global conn
@@ -53,17 +59,17 @@ def check_for_username(username, password, verbosity):
         temp = []
 
     if temp:
-        login_digest = temp[0][1] + password
+        log_digest = temp[0][1] + password
         if verbosity:
             print("\nRetrieving password...")
         for i in range(1000000):
-            login_digest = hashlib.sha256(login_digest.encode('utf-8')).hexdigest()
+            log_digest = hashlib.sha256(log_digest.encode('utf-8')).hexdigest()
     # Select DB row with relevant username
     print("PROVA 1.")
     try:
         rows = cursor.execute('''SELECT * from register
                               WHERE username=? AND digest=?''',
-                              (username, login_digest))
+                              (username, log_digest))
         conn.commit()
         if verbosity:
             print("Done!")
