@@ -1,7 +1,11 @@
 import sqlite3
 import hashlib
 import random
+import os
+import sys
 
+sys.path.append(".")
+from my_package import dbmanager
 
 conn = None
 cursor = None
