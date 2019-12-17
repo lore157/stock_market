@@ -8,7 +8,7 @@ import json
 
 
 def readCompaniesCsv():
-    """ Function used to take the company's stock value from the .csv
+    """ Function used to take the company's stock value from the .csv file.
 
         :return: a list with the stock's value"""
 
@@ -21,11 +21,11 @@ def readCompaniesCsv():
 
 
 def output_check(verbosity, reg_status):
-    """Tailoring the output according to registration status
+    """Tailoring the output according to registration status.
 
     This function defines the type of output according to user's registration;
     If the user is logging-in it will get the beta value for the company
-    required , otherwise it will get just the stock's value. The output changes
+    required, otherwise it will get just the stock's value. The output changes
     even if the user has required -v in the command line.
 
     :param verbosity: the level of verbosity required by the user
@@ -57,12 +57,12 @@ def output_check(verbosity, reg_status):
 
 
 def parsing_input():
-    """Parsing the input for our program
+    """Parsing the input for our program.
 
     This function requires two positional arguments to identify the companies
     that the user is interested in and four optional arguments that are used to
     register the user (-a), to insert the password (-p), to perform a log-in
-    (-c) and to get more info about the status of the program. """
+    (-c) and to get more info about the status of the program (-v). """
 
     parser = argparse.ArgumentParser()
     # Positional arguments
@@ -80,8 +80,8 @@ def parsing_input():
                         help="The password of the related username.",
                         type=str, required=False)
     parser.add_argument('-c',
-                        help="To check for a username and password \
-                             (requires -p)", type=str, required=False)
+                        help="Check for username and password (requires -p)",
+                        type=str, required=False)
     parser.add_argument("-v",
                         help="Increases verbosity of the program.",
                         action="store_true", default=False)
@@ -126,17 +126,17 @@ if __name__ == "__main__":
             price, n = stock.get_price_demo(args.stock_code2)
             output_check(args.v, reg_status)
         print("--------------------------------------------------------------")
-
+        sys.exit(0)
     # Troubleshooting for most common user errors
     except SystemExit:
         print("\nQuitting the program now.")
-        sys.exit()
+        sys.exit(1)
     except NameError:
         print("\nWrite both ticker symbols!")
-        sys.exit()
+        sys.exit(2)
     else:
         # Check for sufficient arguments to allow for a company comparison
         if args.stock_code and args.stock_code2:
             print("\nWrite correctly the ticker symbols!")
-            sys.exit()
+            sys.exit(3)
 

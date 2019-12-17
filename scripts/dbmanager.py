@@ -4,18 +4,15 @@ import random
 import os
 import sys
 
-sys.path.append(".")
-from my_package import dbmanager
-
 conn = None
 cursor = None
 
 
 def open_and_create():
-    """Create and populate the table containing the users and the password
+    """Create and populate the table containing the users and the passwords.
 
     This function creates the local database and selects all the entries of
-    the table; if it doesn't find the table the program creates a new one."""
+    the table; if it doesn't find the table, the program creates a new one."""
 
     global conn
     global cursor
@@ -28,18 +25,20 @@ def open_and_create():
         # Table creation
         cursor.execute('''CREATE TABLE register
                        (username TEXT, salt TEXT, digest TEXT,
-                       PRIMARY KEY (username))''')
+                       PRIMARY KEY (username)
+                       UNIQUE(username))''')
         print("Fixed blank database.\nNow you're able to register for full \
 access to our service.\nIf you want to do so, please use -a \
 USERNAME -p PASSWORD when running this program again.")
-        sys.exit()
+        sys.exit(1)
     return
 
 
 def save_new_username(username, password, verbosity):
-    """Registering users when they are logging-in for the first time
+    """Registering users when they are logging-in for the first time.
 
-    Defining salt and digest of each user and saving it in the table.
+    This function defines a unique salt and digest for each user,
+    and saves everything in the table.
 
     :param username: the username provided by the user for the authentication
     :param password: the password provided by the user for the authentication
@@ -52,37 +51,44 @@ def save_new_username(username, password, verbosity):
     global cursor
     if verbosity:
         print("Registering user...")
-    salt, digest = hash_password(password)  # Encrypting the password
-    cursor.execute('''INSERT OR REPLACE INTO register VALUES (?,?,?)''',
-                   (username, salt, digest))
-    conn.commit()
+
+    # Encrypt and save the password
+    salt, digest = hash_password(password)
+    try:
+        cursor.execute('''INSERT INTO register VALUES (?,?,?)''',
+                      (username, salt, digest))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        # Username already taken
+        print("\nSorry, the username you chose has already been taken.")
+        print("Please choose another username and register again.")
+        sys.exit(4)
 
     print("\nUser successfully registered!")
     return
 
 
 def hash_password(pw):
-    """Encrypt the password
+    """Encrypt the password.
 
-    The program will compute the digest with a random salt and than perform
-    the hashing process.
-
+    The function will compute the digest with a random salt and than perform
+    the hashing process a number of times, to discourage a brute force attack.
 
     :param pw: the local variable containing the password
     :return: salt and digest of the user's password
-    :r_type:str, str
+    :r_type: str, str
     """
 
     salt = str(random.random())
     digest = salt+pw
-    # Repeating the hash 1000000 to increase security
+    # Repeating the hash 1000000 times to increase security
     for i in range(1000000):
         digest = hashlib.sha256(digest.encode('utf-8')).hexdigest()
     return salt, digest
 
 
 def check_for_username(username, password, verbosity):
-    """Check if the username is registered in the DB
+    """Check if the username is registered in the DB.
 
     The function looks for the rows containing the username that
     is trying to log-in. If no row is found the user is new or the input
