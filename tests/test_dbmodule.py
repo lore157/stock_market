@@ -1,24 +1,23 @@
 import unittest
 import os
 import sys
-
-# sys.path.append(".")
-# from dbmanager import open_and_create
-# from scripts import dbmanager
+import sqlite3
 from scripts.dbmanager import open_and_create, save_new_username
 from scripts.dbmanager import hash_password, check_for_username
 
 class Test_OpenAndCreate(unittest.TestCase):
     
-    mock_conn = None
-    mock_cursor = None
+    # mock_conn = None
+    # mock_cursor = None
 
     def setUp(self):
         self.mock_conn = sqlite3.connect('mock.db')
-        self.mock_cursor = mock_conn.cursor()
-        self.cursor.execute('''CREATE TABLE test
-                       (row REAL, string TEXT,
-                       PRIMARY KEY (row))''')
+        self.mock_cursor = self.mock_conn.cursor()
+        self.mock_cursor.execute('''CREATE TABLE IF NOT EXISTS 'test'
+                                 (row REAL, string TEXT,
+                                 PRIMARY KEY (row))''')
+        self.mock_cursor.execute('''INSERT INTO test(row, string)
+                                 VALUES (1, "test string") ''')
 
     def test_no_register_table(self):
         quit = open_and_create('mock.db')
@@ -28,9 +27,11 @@ class Test_OpenAndCreate(unittest.TestCase):
         quit = open_and_create(None)
         self.assertEqual(None, quit)
 
-    def tearDown():
-        self.mock_conn.dispose()
-        self.mock_cursor.dispose()
+    def tearDown(self):
+        self.mock_cursor.execute('''DROP TABLE IF EXISTS test''')
+        self.mock_conn.commit()
+        self.mock_cursor.close()
+        self.mock_conn.close()
 
 
 '''    def test_wrong_user(self):
