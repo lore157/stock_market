@@ -8,7 +8,7 @@ conn = None
 cursor = None
 
 
-def open_and_create():
+def open_and_create(db_name):
     """Create and populate the table containing the users and the passwords.
 
     This function creates the local database and selects all the entries of
@@ -16,7 +16,10 @@ def open_and_create():
 
     global conn
     global cursor
-    conn = sqlite3.connect('credentials.db')
+    # Skip the if statement only when testing
+    if db_name == None:
+        db_name = 'credentials.db'
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     try:
         # Extracting data from the database
@@ -30,7 +33,7 @@ def open_and_create():
         print("Fixed blank database.\nNow you're able to register for full \
 access to our service.\nIf you want to do so, please use -a \
 USERNAME -p PASSWORD when running this program again.")
-        sys.exit(1)
+        sys.exit()
     return
 
 
@@ -58,13 +61,14 @@ def save_new_username(username, password, verbosity):
         cursor.execute('''INSERT INTO register VALUES (?,?,?)''',
                       (username, salt, digest))
         conn.commit()
+        print("\nUser successfully registered!")
+
     except sqlite3.IntegrityError:
         # Username already taken
         print("\nSorry, the username you chose has already been taken.")
         print("Please choose another username and register again.")
         sys.exit(4)
 
-    print("\nUser successfully registered!")
     return
 
 

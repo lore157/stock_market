@@ -100,7 +100,8 @@ if __name__ == "__main__":
 
         # Access to DB and register or login user
         reg_status = False
-        dbmanager.open_and_create()
+        db_name = None
+        dbmanager.open_and_create(db_name)
 
         # Process of user registration
         if args.a and args.p:
@@ -126,15 +127,15 @@ if __name__ == "__main__":
             price, n = stock.get_price_demo(args.stock_code2)
             output_check(args.v, reg_status)
         print("--------------------------------------------------------------")
-        sys.exit(0)
+
     # Troubleshooting for most common user errors
     except SystemExit:
         print("\nQuitting the program now.")
-        sys.exit(1)
+        sys.exit(0)
     except NameError:
         print("\nWrite both ticker symbols!")
         sys.exit(2)
-    else:
+    except:
         # Check for sufficient arguments to allow for a company comparison
         if args.stock_code and args.stock_code2:
             print("\nWrite correctly the ticker symbols!")
