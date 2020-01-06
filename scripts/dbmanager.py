@@ -1,3 +1,4 @@
+"""Importing the modules needed to develop the functions."""
 import sqlite3
 import hashlib
 import random
@@ -12,12 +13,12 @@ def open_and_create(db_name):
     """Create and populate the table containing the users and the passwords.
 
     This function creates the local database and selects all the entries of
-    the table; if it doesn't find the table, the program creates a new one."""
-
+    the table; if it doesn't find the table, the program creates a new one.
+    """
     global conn
     global cursor
     # Skip the if statement only when testing
-    if db_name == None:
+    if db_name is None:
         db_name = 'credentials.db'
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -48,8 +49,6 @@ def save_new_username(username, password, verbosity):
     :param verbosity: the level of verbosity when directly required by the user
     :return: confirm that the registration process was succesfully concluded
     """
-
-
     global conn
     global cursor
     if verbosity:
@@ -59,7 +58,7 @@ def save_new_username(username, password, verbosity):
     salt, digest = hash_password(password)
     try:
         cursor.execute('''INSERT INTO register VALUES (?,?,?)''',
-                      (username, salt, digest))
+                       (username, salt, digest))
         conn.commit()
         print("\nUser successfully registered!")
 
@@ -82,7 +81,6 @@ def hash_password(pw):
     :return: salt and digest of the user's password
     :r_type: str, str
     """
-
     salt = str(random.random())
     digest = salt+pw
     # Repeating the hash 1000000 times to increase security
@@ -105,7 +103,6 @@ def check_for_username(username, password, verbosity):
     :return: True If the user is already registered, otherwise False.
     :rtype: Boolean
     """
-
     global conn
     global cursor
     try:
@@ -146,4 +143,3 @@ def check_for_username(username, password, verbosity):
 or confirm username and password are written correctly.")
 
     return registered
-

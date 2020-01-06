@@ -1,3 +1,4 @@
+"""Importing modules necessary for the functions to work."""
 from my_package import stock   # Importing module 'stock' from my_package
 from scripts import dbmanager  # Importing module 'dbmanager' from scripts
 import sys
@@ -10,8 +11,8 @@ import json
 def readCompaniesCsv():
     """ Function used to take the company's stock value from the .csv file.
 
-        :return: a list with the stock's value"""
-
+        :return: a list with the stock's value
+    """
     reader = csv.reader(open('csv_stock.csv', 'r'))
     companies = []
     next(reader)
@@ -29,8 +30,8 @@ def output_check(verbosity, reg_status):
     even if the user has required -v in the command line.
 
     :param verbosity: the level of verbosity required by the user
-    :param reg_status: wheter the user is registered or not"""
-
+    :param reg_status: wheter the user is registered or not
+    """
     # The user is registered and asks for verbosity.
     if verbosity and reg_status:
         print("--------------------------------------------------------------")
@@ -38,18 +39,18 @@ def output_check(verbosity, reg_status):
         print("Company {} right now has a stock value of {}$".format(n, price))
         print("Company {} right now has a beta equal to {}".format(n, beta))
     # The user is registered but doesn't ask for verbosity.
-    elif verbosity == False and reg_status == True:
+    elif verbosity is False and reg_status is True:
         print("--------------------------------------------------------------")
         print("Company: {}".format(n))
         print("Stock price: {}$".format(price))
         print("Beta: {}".format(beta))
     # The user is not registered but asks for verbosity.
-    elif verbosity and reg_status == False:
+    elif verbosity and reg_status is False:
         print("--------------------------------------------------------------")
         print("Successfully fetched data.")
         print("Company {} right now has a stock value of {}$".format(n, price))
     # The user is  not registered and doesn't ask for verbosity.
-    elif verbosity == False and reg_status == False:
+    elif verbosity is False and reg_status is False:
         print("--------------------------------------------------------------")
         print("Company: {}".format(n))
         print("Stock price: {}$".format(price))
@@ -62,8 +63,8 @@ def parsing_input():
     This function requires two positional arguments to identify the companies
     that the user is interested in and four optional arguments that are used to
     register the user (-a), to insert the password (-p), to perform a log-in
-    (-c) and to get more info about the status of the program (-v). """
-
+    (-c) and to get more info about the status of the program (-v).
+    """
     parser = argparse.ArgumentParser()
     # Positional arguments
     parser.add_argument("stock_code",
@@ -90,9 +91,7 @@ def parsing_input():
 
 
 if __name__ == "__main__":
-    """"main.py" main objective is to return the value of a company's stock
-    price from an online database with real-time data."""
-
+    """"main.py"return the value of a company's stock price."""
     try:
         # Retrieve allowed ticker symbols and user input
         valid_firms = readCompaniesCsv()
@@ -140,4 +139,3 @@ if __name__ == "__main__":
         if args.stock_code and args.stock_code2:
             print("\nWrite correctly the ticker symbols!")
             sys.exit(3)
-
