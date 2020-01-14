@@ -1,4 +1,4 @@
-"""Importing the modules."""
+"""Import the modules needed to develop the functions."""
 import requests
 import json
 
@@ -10,7 +10,7 @@ def get_price_demo(company):
     """Retrieving only stock price of the chosen company for program demo.
 
     We are implementing this function when the user is not registered. As
-    output it will have the company's stock real time value.
+    output, it will have just the company's stock real time value.
 
     :param company: the ticker of the company required by the user
     :return: the real time value and the company's complete name
@@ -27,7 +27,7 @@ def get_data_registered(company):
     """Retrieving stock price and beta of the chosen company.
 
     We are implementing this function when the user is registered. As
-    output it will have the company's stock real time value and the beta
+    output, it will have the company's stock real time value and the beta
 
     :param company: the ticker of the company required by the user
     :return: the real time value of the stock, the beta and the complete name

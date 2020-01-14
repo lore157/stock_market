@@ -1,4 +1,4 @@
-"""Importing the modules needed to develop the functions."""
+"""Import the modules needed to develop the functions."""
 import sqlite3
 import hashlib
 import random
@@ -39,7 +39,7 @@ USERNAME -p PASSWORD when running this program again.")
 
 
 def save_new_username(username, password, verbosity):
-    """Registering users when they are logging-in for the first time.
+    """Register users when they are logging-in for the first time.
 
     This function defines a unique salt and digest for each user,
     and saves everything in the table.
@@ -74,8 +74,8 @@ def save_new_username(username, password, verbosity):
 def hash_password(pw):
     """Encrypt the password.
 
-    The function will compute the digest with a random salt and than perform
-    the hashing process a number of times, to discourage a brute force attack.
+    The function will compute the digest with a random salt and then perform
+    the hashing process many times, to discourage a brute force attack.
 
     :param pw: the local variable containing the password
     :return: salt and digest of the user's password
@@ -90,17 +90,17 @@ def hash_password(pw):
 
 
 def check_for_username(username, password, verbosity):
-    """Check if the username is registered in the DB.
+    """Check if the username is registered in the database.
 
     The function looks for the rows containing the username that
-    is trying to log-in. If no row is found the user is new or the input
-    had a typo so the program will work in demo mode.
+    is trying to log-in. If no row is found, the user is new or the input
+    had a typo: the program will work in demo mode.
 
 
     :param username: the username provided by the user for the authentication
     :param password: the password provided by the user for the authentication
-    :param verbosity: the lavel of verbosity when directly required by the user
-    :return: True If the user is already registered, otherwise False.
+    :param verbosity: the level of verbosity when directly required by the user
+    :return: True if the user is already registered, False otherwise.
     :rtype: Boolean
     """
     global conn
@@ -119,6 +119,7 @@ def check_for_username(username, password, verbosity):
         # Recomputing the digest for the user's salt to check the password
         for i in range(1000000):
             log_digest = hashlib.sha256(log_digest.encode('utf-8')).hexdigest()
+
     # Select DB row with relevant username
     try:
         rows = cursor.execute('''SELECT * from register
@@ -128,7 +129,7 @@ def check_for_username(username, password, verbosity):
         if verbosity:
             print("Done!")
         rows = rows.fetchall()
-    except:
+    except sqlite3.OperationalError:
         rows = []
 
     # Change program behaviour based on verified registration

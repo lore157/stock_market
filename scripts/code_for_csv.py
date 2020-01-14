@@ -1,11 +1,10 @@
-""" Taking the data and converting them in .csv.
+"""Take data online and convert them in .csv.
 
 This code takes the APIs from the website URL and stores them with json.
 Then, it converts the database in .csv with to_csv using the "pandas" library.
 So, in the .csv we are going to find the allowed companies' name that the user
-has to write as input to make the program work
+has to write as input to make the program work.
 """
-
 import json
 import urllib.request as urllib2
 import pandas as pd

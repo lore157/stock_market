@@ -1,4 +1,5 @@
-"""Importing modules necessary for the functions to work."""
+"""Import modules necessary for the functions to work."""
+
 from my_package import stock   # Importing module 'stock' from my_package
 from scripts import dbmanager  # Importing module 'dbmanager' from scripts
 import sys
@@ -9,9 +10,9 @@ import json
 
 
 def readCompaniesCsv():
-    """ Function used to take the company's stock value from the .csv file.
+    """Function used to take the company's stock value from the .csv file.
 
-        :return: a list with the stock's value
+    :return: a list with the stock's value
     """
     reader = csv.reader(open('csv_stock.csv', 'r'))
     companies = []
@@ -30,7 +31,7 @@ def output_check(verbosity, reg_status):
     even if the user has required -v in the command line.
 
     :param verbosity: the level of verbosity required by the user
-    :param reg_status: wheter the user is registered or not
+    :param reg_status: whether the user is registered or not
     """
     # The user is registered and asks for verbosity.
     if verbosity and reg_status:
@@ -91,7 +92,7 @@ def parsing_input():
 
 
 if __name__ == "__main__":
-    """"main.py"return the value of a company's stock price."""
+    """main.py returns the value of a company's stock price."""
     try:
         # Retrieve allowed ticker symbols and user input
         valid_firms = readCompaniesCsv()
@@ -134,7 +135,7 @@ if __name__ == "__main__":
     except NameError:
         print("\nWrite both ticker symbols!")
         sys.exit(2)
-    except:
+    except ValueError:
         # Check for sufficient arguments to allow for a company comparison
         if args.stock_code and args.stock_code2:
             print("\nWrite correctly the ticker symbols!")
